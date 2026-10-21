@@ -14,8 +14,33 @@ const dialog = document.querySelector('#project-dialog');
 const bubbles = [...document.querySelectorAll('.bubble')];
 const playground = document.querySelector('#playground');
 document.querySelector('[data-filter="all"] small').textContent = String(bubbles.length).padStart(2, '0');
-// The native dialog handles Escape, keyboard focus, and focus restoration.
-bubbles.forEach(bubble => bubble.addEventListener('click', () => {
+// One non-modal preview follows the active bubble without blocking the page.
+// Links retain normal browser behavior, including opening in a new tab.
+let activeBubble = null;
+let closeTimer;
+function closePreview() {
+  clearTimeout(closeTimer);
+  dialog.hidden = true;
+  activeBubble?.setAttribute('aria-expanded', 'false');
+  bubbles.forEach(item => delete item.dataset.touchReady);
+  activeBubble = null;
+}
+function positionPreview() {
+  if (!activeBubble) return;
+  const bounds = activeBubble.getBoundingClientRect();
+  const gap = 14;
+  const width = dialog.offsetWidth;
+  const height = dialog.offsetHeight;
+  // Prefer beside the bubble; clamp both axes to keep the preview onscreen.
+  const beside = bounds.right + gap + width <= innerWidth;
+  const left = beside ? bounds.right + gap : bounds.left - width - gap;
+  dialog.style.left = `${Math.max(12, Math.min(left, innerWidth - width - 12))}px`;
+  dialog.style.top = `${Math.max(12, Math.min(bounds.top, innerHeight - height - 12))}px`;
+}
+function showPreview(bubble) {
+  clearTimeout(closeTimer);
+  activeBubble?.setAttribute('aria-expanded', 'false');
+  activeBubble = bubble;
   const project = projects[bubble.dataset.project];
   document.querySelector('#dialog-title').textContent = project.title;
   document.querySelector('#dialog-category').textContent = project.category;
@@ -24,20 +49,78 @@ bubbles.forEach(bubble => bubble.addEventListener('click', () => {
   icon.textContent = project.icon;
   icon.style.background = project.color;
   document.querySelector('#dialog-link').href = project.url;
-  document.querySelector('#dialog-link').textContent = 'Explore project ↗';
   document.querySelector('#dialog-tags').replaceChildren(...project.tags.map(label => {
     const tag = document.createElement('span');
     tag.textContent = label;
     return tag;
   }));
-  dialog.showModal();
-}));
-document.querySelector('#close-dialog').addEventListener('click', () => dialog.close());
-dialog.addEventListener('click', event => {
-  const bounds = dialog.getBoundingClientRect();
-  if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close();
+  dialog.hidden = false;
+  bubble.setAttribute('aria-expanded', 'true');
+  positionPreview();
+}
+function scheduleClose() {
+  // The delay lets the pointer cross the gap into the preview and its link.
+  clearTimeout(closeTimer);
+  closeTimer = setTimeout(() => {
+    if (!dialog.matches(':hover') && !dialog.contains(document.activeElement)) closePreview();
+  }, 220);
+}
+bubbles.forEach(bubble => {
+  bubble.setAttribute('aria-controls', 'project-dialog');
+  bubble.setAttribute('aria-expanded', 'false');
+  bubble.addEventListener('pointerenter', event => {
+    if (event.pointerType === 'mouse') showPreview(bubble);
+  });
+  bubble.addEventListener('pointerleave', scheduleClose);
+  bubble.addEventListener('focus', () => showPreview(bubble));
+  bubble.addEventListener('blur', scheduleClose);
+  // Touch has no hover: first tap previews, then use Explore project or tap again.
+  bubble.addEventListener('click', event => {
+    if (window.matchMedia('(hover: none)').matches && bubble.dataset.touchReady !== 'true') {
+      event.preventDefault();
+      bubbles.forEach(item => delete item.dataset.touchReady);
+      bubble.dataset.touchReady = 'true';
+      showPreview(bubble);
+    }
+  });
+});
+dialog.addEventListener('pointerenter', () => clearTimeout(closeTimer));
+dialog.addEventListener('pointerleave', scheduleClose);
+dialog.addEventListener('focusout', scheduleClose);
+document.querySelector('#close-dialog').addEventListener('click', closePreview);
+document.addEventListener('keydown', event => { if (event.key === 'Escape') closePreview(); });
+document.addEventListener('pointerdown', event => {
+  if (!dialog.contains(event.target) && !event.target.closest('.bubble')) {
+    closePreview();
+    bubbles.forEach(item => delete item.dataset.touchReady);
+  }
+});
+window.addEventListener('scroll', closePreview, { passive: true });
+window.addEventListener('resize', closePreview);
+// Hover opens case context. Clicking the summary pins it open, and touch/keyboard
+// users can use the native disclosure without relying on hover.
+document.querySelectorAll('.case-card').forEach(card => {
+  const details = card.querySelector('details');
+  let pinned = false;
+  details.querySelector('summary').addEventListener('click', event => {
+    event.preventDefault();
+    pinned = !pinned;
+    details.open = pinned;
+  });
+  card.addEventListener('pointerenter', event => {
+    if (event.pointerType === 'mouse') details.open = true;
+  });
+  card.addEventListener('pointerleave', () => {
+    if (!pinned && !card.contains(document.activeElement)) details.open = false;
+  });
+  card.addEventListener('focusout', () => {
+    requestAnimationFrame(() => {
+      if (!pinned && !card.matches(':hover') && !card.contains(document.activeElement)) details.open = false;
+    });
+  });
 });
 document.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => {
+  closePreview();
   const filter = button.dataset.filter;
   document.querySelectorAll('[data-filter]').forEach(item => {
     item.classList.toggle('active', item === button);
