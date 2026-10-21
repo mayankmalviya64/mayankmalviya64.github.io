@@ -5,11 +5,15 @@ const projects = {
   company: {title:'Company Overview',category:'EXPLORE & LEARN / BUSINESS',icon:'⌘',color:'#d6cce7',description:'Explore the businesses behind familiar names. Company briefs bring together business structure, products, and research in an approachable format for MBA preparation.',tags:['Business research','MBA prep','Interactive guides'],url:'https://mayankmalviya64.github.io/company-overview/'},
   spirit: {title:'Spirit Atlas',category:'EXPLORE & LEARN / EDITORIAL',icon:'✧',color:'#f0c6a7',description:'An explorable guide to the world of spirits: ingredients, processes, and the stories that connect them. An editorial rabbit hole, from grain to glass.',tags:['Interactive atlas','Editorial','Discovery'],url:'https://mayankmalviya64.github.io/spirit-atlas/'},
   listenr: {title:'Listenr',category:'USEFUL TOOLS / READING',icon:'≋',color:'#c9dce9',description:'A reading and listening experiment that gives text another way to be experienced. Explore the Listenr web app and its approach to listening on the web.',tags:['Audio','Reading','Web app'],url:'https://mayankmalviya64.github.io/listenr-web/'},
-  otif: {title:'OTIF Intelligence',category:'EXPLORE & LEARN / ANALYTICS',icon:'↗',color:'#e9dfa6',description:'An AI-enabled on-time, in-full performance analysis project for KOSMIC Case 10. An exploration of delivery performance through data and business analysis.',tags:['Supply chain','Analytics','Case competition'],url:'https://github.com/mayankmalviya64/kearney-otif-analysis'}
+  otif: {title:'OTIF Sentinel',category:'EXPLORE & LEARN / ANALYTICS',icon:'↗',color:'#e9dfa6',description:'An AI-enabled on-time, in-full performance analysis project for KOSMIC Case 10. Explore the OTIF Sentinel dashboard for a closer look at delivery performance through data and business analysis.',tags:['Supply chain','Analytics','Case competition'],url:'https://mayankmalviya64.github.io/kearney-otif-analysis/otif-sentinel.html'},
+  tracker: {title:'Unstop Case Comp Tracker',category:'USEFUL TOOLS / COMPETITIONS',icon:'⚑',color:'#eed0cc',description:'A Chrome extension for tracking Unstop case competitions, upcoming rounds, and deadlines. Keep your competition calendar and progress in one place.',tags:['Chrome extension','Unstop','Deadline tracking'],url:'https://casecomptracker.me/'},
+  reviewradar: {title:'ReviewRadar',category:'USEFUL TOOLS / PRODUCT INSIGHTS',icon:'◎',color:'#c7ded8',description:'Turn Google Play reviews into evidence-backed product intelligence. Explore sentiment, liked features, recurring complaints, and feature requests to understand what users are saying.',tags:['Product intelligence','Review analysis','AI'],url:'https://mayankmalviya64.github.io/reviewradar/'},
+  between: {title:'Between Lines',category:'USEFUL TOOLS / CONVERSATION INSIGHTS',icon:'❝',color:'#e5cfe0',description:'A private, browser-based tool for exploring WhatsApp conversations. Discover response patterns, initiative, and conversation rhythms, with local analysis that keeps your chat in your browser.',tags:['Conversation insights','WhatsApp','Local analysis'],url:'https://mayankmalviya64.github.io/between-lines/'}
 };
 const dialog = document.querySelector('#project-dialog');
 const bubbles = [...document.querySelectorAll('.bubble')];
 const playground = document.querySelector('#playground');
+document.querySelector('[data-filter="all"] small').textContent = String(bubbles.length).padStart(2, '0');
 // The native dialog handles Escape, keyboard focus, and focus restoration.
 bubbles.forEach(bubble => bubble.addEventListener('click', () => {
   const project = projects[bubble.dataset.project];
@@ -20,7 +24,7 @@ bubbles.forEach(bubble => bubble.addEventListener('click', () => {
   icon.textContent = project.icon;
   icon.style.background = project.color;
   document.querySelector('#dialog-link').href = project.url;
-  document.querySelector('#dialog-link').textContent = bubble.dataset.project === 'otif' ? 'Explore on GitHub ↗' : 'Explore project ↗';
+  document.querySelector('#dialog-link').textContent = 'Explore project ↗';
   document.querySelector('#dialog-tags').replaceChildren(...project.tags.map(label => {
     const tag = document.createElement('span');
     tag.textContent = label;
@@ -41,8 +45,7 @@ document.querySelectorAll('[data-filter]').forEach(button => button.addEventList
   });
   const visible = bubbles.filter(bubble => filter === 'all' || bubble.dataset.category === filter);
   bubbles.forEach(bubble => { bubble.hidden = !visible.includes(bubble); });
-  // Spread the filtered group across desktop; mobile uses a two-column grid.
-  visible.forEach((bubble, index) => bubble.style.setProperty('--filtered-x', `${5 + index * 32}%`));
+  // CSS grid reflows any number of filtered projects without clipping bubbles.
   playground.classList.toggle('filtered', filter !== 'all');
   document.querySelector('#project-count').textContent = `${String(visible.length).padStart(2,'0')} PROJECTS · ${filter === 'all' ? 'IN NO PARTICULAR ORBIT' : button.textContent.trim().toUpperCase()}`;
 }));
