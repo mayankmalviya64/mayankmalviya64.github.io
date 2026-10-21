@@ -12,3 +12,14 @@
 .tracker strong{font-size:22px}.tiny-star{display:none}
 @media(max-width:720px){.playground,.playground.filtered{grid-template-columns:repeat(2,minmax(0,1fr));gap:25px 10px;padding:65px 12px}.playground .bubble,.playground.filtered .bubble{width:100%;max-width:190px}.tracker strong{font-size:18px}.playground .bubble>span:not(.icon){font-size:9px}.playground .bubble strong{font-size:clamp(15px,3.5vw,19px)}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.bubble{animation:none;transition:none}}
+
+/* A shared heading lets the portrait and story sit together on wide screens.
+   Object positioning keeps Mayank central without altering the source photograph. */
+.about{grid-template-columns:minmax(0,.85fr) minmax(0,1fr);column-gap:70px;row-gap:38px;align-items:center}
+.about-heading{grid-column:1 / -1}
+.about-photo{margin:0;align-self:start}
+.about-photo img{display:block;width:100%;height:auto;aspect-ratio:4 / 5;object-fit:cover;object-position:49% 48%;border-radius:160px 160px 18px 18px;border:1px solid var(--line)}
+.about-photo figcaption{margin-top:14px;color:var(--muted);font-size:11px;letter-spacing:.3px}
+.about-copy .about-lead{color:var(--ink);font-family:'Manrope',sans-serif;font-size:26px;line-height:1.4;letter-spacing:-.6px}
+@media(max-width:1050px){.about{column-gap:35px}.hero-copy{max-width:72%}}
+@media(max-width:720px){.hero-copy{max-width:none}.about{grid-template-columns:1fr;gap:28px}.about-heading{grid-column:auto}.about-photo{width:min(100%,390px);justify-self:center}.about-photo img{aspect-ratio:1 / 1.1}.about-copy .about-lead{font-size:24px}}
