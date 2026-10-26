@@ -12,7 +12,7 @@
    The grid fills left to right, so HTML order = recruiter reading order.
    Bubble size also follows window height so all 3 rows stay on screen.
    Tablets keep 3 per row and phones keep 2 (see the max-width rules). */
-@media(min-width:1100px){.playground,.playground.filtered{grid-template-columns:repeat(4,minmax(0,1fr));gap:24px 20px;padding:50px 40px 45px}.playground .bubble.bubble{width:min(100%,215px,calc((100vh - 150px)/3 - 16px))}.playground .bubble strong{font-size:clamp(16px,2.6vh,22px)}.playground .bubble>span:not(.icon){font-size:clamp(9px,1.35vh,11px);max-width:84%}}
+@media(min-width:1100px){.playground,.playground.filtered{grid-template-columns:repeat(4,minmax(0,1fr));gap:24px 20px;padding:50px 40px 45px}.playground .bubble.bubble{width:min(90%,194px,calc(((100vh - 150px)/3 - 16px)*.9))}.playground .bubble strong{font-size:clamp(14.5px,2.35vh,20px)}.playground .bubble>span:not(.icon){font-size:clamp(9px,1.35vh,11px);max-width:84%}}
 .tracker{background:#eed0cc;rotate:-5deg;animation-delay:-2s}.reviewradar{background:#c7ded8;rotate:6deg;animation-delay:-4s}.between{background:#e5cfe0;rotate:-7deg;animation-delay:-1s}
 .tracker strong{font-size:22px}.tiny-star{display:none}
 /* Newer projects reuse the same pastel bubble recipe: a soft fill, a slight tilt, and an offset float. */
