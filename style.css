@@ -61,8 +61,19 @@
 .case-preview .case-context p:last-of-type{margin-bottom:12px}
 
 /* Playful avatar: a round photo replaces the "mm" wordmark text and wiggles on hover */
-.wordmark{display:inline-flex;align-items:center}.wordmark span{align-self:flex-start;margin-top:-4px}
-.wordmark-kid{width:72px;height:72px;border-radius:50%;object-fit:cover;margin-right:2px;transition:transform .3s}
+.wordmark{display:inline-flex;align-items:center;position:relative}
+.wordmark-kid{width:72px;height:72px;border-radius:50%;object-fit:cover;transition:transform .3s}
 .wordmark:hover .wordmark-kid{transform:rotate(-12deg) scale(1.12)}
-@media(max-width:720px){.wordmark-kid{width:50px;height:50px}}
-@media(prefers-reduced-motion:reduce){.wordmark-kid{transition:none}}
+
+/* "Fun mode" card: the full, uncropped photo floats below the avatar on hover or keyboard focus.
+   It stays hidden (invisible + not clickable) until then, and fades/tilts in like a dropped polaroid. */
+.kid-pop{position:absolute;left:-6px;top:calc(100% + 14px);z-index:30;margin:0;padding:8px 8px 12px;background:#fff;border-radius:6px;box-shadow:0 14px 34px rgba(37,40,32,.18);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px) rotate(0deg);transition:opacity .25s,transform .25s,visibility .25s;letter-spacing:0}
+.kid-pop img{display:block;width:220px;height:auto;border-radius:3px}
+.kid-pop figcaption{margin-top:9px;text-align:center;font:italic 17px Georgia,serif;font-weight:normal;color:#777d65}
+.wordmark:hover .kid-pop,.wordmark:focus-visible .kid-pop{opacity:1;visibility:visible;transform:translateY(0) rotate(-3deg)}
+
+/* The green ✳ that used to sit beside "mm" now ends the "A WORK IN CURIOSITY" tagline */
+.nav-star{color:#6c8051;font-size:15px;margin-left:4px;letter-spacing:0}
+
+@media(max-width:720px){.wordmark-kid{width:50px;height:50px}.kid-pop img{width:170px}}
+@media(prefers-reduced-motion:reduce){.wordmark-kid,.kid-pop{transition:none}}
