@@ -59,3 +59,10 @@
 .case-preview h2{font-size:24px}
 .case-preview .case-context{padding-top:4px}
 .case-preview .case-context p:last-of-type{margin-bottom:12px}
+
+/* Playful avatar: a small round photo sits before the "mm" wordmark and wiggles on hover */
+.wordmark{display:inline-flex;align-items:center}.wordmark span{align-self:flex-start;margin-top:-4px}
+.wordmark-kid{width:46px;height:46px;border-radius:50%;object-fit:cover;margin-right:12px;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);transition:transform .3s}
+.wordmark:hover .wordmark-kid{transform:rotate(-12deg) scale(1.12)}
+@media(max-width:720px){.wordmark-kid{width:36px;height:36px;margin-right:9px}}
+@media(prefers-reduced-motion:reduce){.wordmark-kid{transition:none}}
