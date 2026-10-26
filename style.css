@@ -42,3 +42,6 @@
 .leadership-row{transition:background .2s,box-shadow .2s}.leadership-row:hover,.leadership-row:focus-within{background:#e8ebde;box-shadow:14px 0 #e8ebde,-14px 0 #e8ebde}.about-photo img{transition:box-shadow .2s}.about-photo:hover img{box-shadow:0 12px 32px #25282018}.tags span:hover{background:#e5ebd6}.contact-links a,nav a,footer a{transition:color .2s}footer a:hover{color:#638040}
 @media(hover:none){.project-preview{left:12px!important;top:auto!important;bottom:12px;width:calc(100vw - 24px);max-height:75dvh}}
 @media(prefers-reduced-motion:reduce){.case-card,.leadership-row,.about-photo img,.contact-links a,nav a,footer a{transition:none}}
+
+/* Org logos: a small logo sits just before each competition / role title */
+.title-row{display:flex;align-items:center;gap:14px;margin:0 0 9px}.title-row h3{margin:0}.org-logo{height:34px;width:auto;max-width:120px;object-fit:contain;flex:none}
