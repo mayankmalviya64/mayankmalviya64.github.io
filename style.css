@@ -60,10 +60,14 @@
 .case-preview .case-context{padding-top:4px}
 .case-preview .case-context p:last-of-type{margin-bottom:12px}
 
-/* Playful avatar: a round photo replaces the "mm" wordmark text and wiggles on hover */
+/* Playful avatar: a mini tilted polaroid of the photo replaces the "mm" wordmark text.
+   The white padding is the photo frame (thicker at the bottom, like a real polaroid). */
 .wordmark{display:inline-flex;align-items:center;position:relative}
-.wordmark-kid{width:72px;height:72px;border-radius:50%;object-fit:cover;transition:transform .3s}
-.wordmark:hover .wordmark-kid{transform:rotate(-12deg) scale(1.12)}
+.wordmark-kid{width:66px;height:auto;padding:4px 4px 11px;background:#fff;border-radius:3px;box-shadow:0 4px 12px rgba(37,40,32,.16);transform:rotate(-5deg);transition:transform .3s}
+.wordmark:hover .wordmark-kid{transform:rotate(3deg) scale(1.08)}
+
+/* Handwritten title to the right of the polaroid, in the same italic serif as the hero's side note */
+.wordmark-title{margin-left:16px;font:italic 18px Georgia,serif;font-weight:normal;letter-spacing:0;color:#777d65;transform:rotate(-3deg)}
 
 /* "Fun mode" card: the full, uncropped photo floats below the avatar on hover or keyboard focus.
    It stays hidden (invisible + not clickable) until then, and fades/tilts in like a dropped polaroid. */
@@ -75,5 +79,5 @@
 /* The green ✳ that used to sit beside "mm" now ends the "A WORK IN CURIOSITY" tagline */
 .nav-star{color:#6c8051;font-size:15px;margin-left:4px;letter-spacing:0}
 
-@media(max-width:720px){.wordmark-kid{width:50px;height:50px}.kid-pop img{width:170px}}
+@media(max-width:720px){.wordmark-kid{width:52px}.wordmark-title{font-size:15px;margin-left:12px}.kid-pop img{width:170px}}
 @media(prefers-reduced-motion:reduce){.wordmark-kid,.kid-pop{transition:none}}
