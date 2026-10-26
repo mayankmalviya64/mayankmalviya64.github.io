@@ -100,28 +100,81 @@ document.addEventListener('pointerdown', event => {
 });
 window.addEventListener('scroll', closePreview, { passive: true });
 window.addEventListener('resize', closePreview);
-// Hover opens case context. Clicking the summary pins it open, and touch/keyboard
-// users can use the native disclosure without relying on hover.
+// Case cards no longer expand. Hovering (or keyboard-focusing) a card shows its
+// "Inside the challenge" notes in a floating card, like the bubble previews.
+// On touch screens, tapping "Inside the challenge" opens the same floating card.
+const casePreview = document.querySelector('#case-preview');
+let activeCard = null;
+let caseCloseTimer;
+function positionCasePreview() {
+  if (!activeCard) return;
+  const bounds = activeCard.getBoundingClientRect();
+  const gap = 12;
+  const width = casePreview.offsetWidth;
+  const height = casePreview.offsetHeight;
+  // Prefer beside the card; if neither side has room, sit just below (or above) it.
+  let left, top;
+  if (bounds.right + gap + width <= innerWidth) { left = bounds.right + gap; top = bounds.top; }
+  else if (bounds.left - gap - width >= 0) { left = bounds.left - width - gap; top = bounds.top; }
+  else {
+    left = bounds.right - width;
+    top = bounds.bottom - 40 + height <= innerHeight ? bounds.bottom - 40 : bounds.top - height + 40;
+  }
+  // Clamp both axes so the floating card always stays on screen.
+  casePreview.style.left = `${Math.max(12, Math.min(left, innerWidth - width - 12))}px`;
+  casePreview.style.top = `${Math.max(12, Math.min(top, innerHeight - height - 12))}px`;
+}
+function showCasePreview(card) {
+  clearTimeout(caseCloseTimer);
+  if (activeCard === card && !casePreview.hidden) return;
+  activeCard = card;
+  // Build the floating card: result label, company name, then the challenge notes.
+  const label = document.createElement('p');
+  label.className = 'eyebrow';
+  label.textContent = card.querySelector('.result-label').textContent;
+  const title = document.createElement('h2');
+  title.textContent = card.querySelector('h3').textContent;
+  casePreview.replaceChildren(label, title, card.querySelector('.case-context').cloneNode(true));
+  casePreview.hidden = false;
+  positionCasePreview();
+}
+function closeCasePreview() {
+  clearTimeout(caseCloseTimer);
+  casePreview.hidden = true;
+  activeCard = null;
+}
+function scheduleCaseClose() {
+  // Short delay so the pointer can move onto the floating card (it has a source link).
+  clearTimeout(caseCloseTimer);
+  caseCloseTimer = setTimeout(() => {
+    if (!casePreview.matches(':hover') && !casePreview.contains(document.activeElement) &&
+        !activeCard?.matches(':hover') && !activeCard?.contains(document.activeElement)) closeCasePreview();
+  }, 220);
+}
 document.querySelectorAll('.case-card').forEach(card => {
-  const details = card.querySelector('details');
-  let pinned = false;
-  details.querySelector('summary').addEventListener('click', event => {
+  // The <details> stays closed for good; its content is only shown in the floating card.
+  card.querySelector('summary').addEventListener('click', event => {
     event.preventDefault();
-    pinned = !pinned;
-    details.open = pinned;
+    if (activeCard === card && !casePreview.hidden) closeCasePreview();
+    else showCasePreview(card);
   });
   card.addEventListener('pointerenter', event => {
-    if (event.pointerType === 'mouse') details.open = true;
+    if (event.pointerType === 'mouse') showCasePreview(card);
   });
-  card.addEventListener('pointerleave', () => {
-    if (!pinned && !card.contains(document.activeElement)) details.open = false;
-  });
-  card.addEventListener('focusout', () => {
-    requestAnimationFrame(() => {
-      if (!pinned && !card.matches(':hover') && !card.contains(document.activeElement)) details.open = false;
-    });
-  });
+  card.addEventListener('pointerleave', scheduleCaseClose);
+  card.addEventListener('focusin', () => showCasePreview(card));
+  card.addEventListener('focusout', scheduleCaseClose);
 });
+casePreview.addEventListener('pointerenter', () => clearTimeout(caseCloseTimer));
+casePreview.addEventListener('pointerleave', scheduleCaseClose);
+casePreview.addEventListener('focusout', scheduleCaseClose);
+// Tapping elsewhere or pressing Escape closes it; scrolling keeps it pinned to its card.
+document.addEventListener('pointerdown', event => {
+  if (!casePreview.contains(event.target) && !event.target.closest('.case-card')) closeCasePreview();
+});
+document.addEventListener('keydown', event => { if (event.key === 'Escape') closeCasePreview(); });
+window.addEventListener('scroll', positionCasePreview, { passive: true });
+window.addEventListener('resize', closeCasePreview);
 document.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => {
   closePreview();
   const filter = button.dataset.filter;

@@ -53,3 +53,9 @@
 
 /* Org logos: a small logo sits just before each competition / role title */
 .title-row{display:flex;align-items:center;gap:14px;margin:0 0 9px}.title-row h3{margin:0}.org-logo{height:34px;width:auto;max-width:120px;object-fit:contain;flex:none}
+
+/* Floating "Inside the challenge" card for case competitions (reuses the bubble preview look). */
+.case-preview .eyebrow{font-size:8px;letter-spacing:1px;margin:0 0 10px}
+.case-preview h2{font-size:24px}
+.case-preview .case-context{padding-top:4px}
+.case-preview .case-context p:last-of-type{margin-bottom:12px}
