@@ -10,6 +10,9 @@
 .playground .spotify,.playground .spirit,.playground .otif{width:min(91%,205px)}
 .tracker{background:#eed0cc;rotate:-5deg;animation-delay:-2s}.reviewradar{background:#c7ded8;rotate:6deg;animation-delay:-4s}.between{background:#e5cfe0;rotate:-7deg;animation-delay:-1s}
 .tracker strong{font-size:22px}.tiny-star{display:none}
+/* Newer projects reuse the same pastel bubble recipe: a soft fill, a slight tilt, and an offset float. */
+.drishti{background:#d2d6ee;rotate:6deg;animation-delay:-3s}.dsat{background:#f1dcb9;rotate:-6deg;animation-delay:-5s}
+.playground .drishti{width:min(91%,205px)}
 @media(max-width:720px){.playground,.playground.filtered{grid-template-columns:repeat(2,minmax(0,1fr));gap:25px 10px;padding:65px 12px}.playground .bubble,.playground.filtered .bubble{width:100%;max-width:190px}.tracker strong{font-size:18px}.playground .bubble>span:not(.icon){font-size:9px}.playground .bubble strong{font-size:clamp(15px,3.5vw,19px)}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.bubble{animation:none;transition:none}}
 
