@@ -8,11 +8,12 @@
 .playground,.playground.filtered{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));height:auto;min-height:0;gap:36px 20px;padding:75px 30px 65px;justify-items:center;align-items:center}
 .playground .bubble,.playground.filtered .bubble{position:relative;inset:auto;width:min(100%,230px);height:auto;min-width:0;min-height:0;aspect-ratio:1}
 .playground .spotify,.playground .spirit,.playground .otif{width:min(91%,205px)}
-/* Wide screens: 4 bubbles per row, so all 12 projects fit in 3 rows and one view.
+/* Wide screens: 5 cells per row. The featured bubble takes a 2×2 block (4 cells),
+   so it plus the other 11 projects fill exactly 3 rows and one view.
    The grid fills left to right, so HTML order = recruiter reading order.
-   Bubble size also follows window height so all 3 rows stay on screen.
+   --b is the base bubble size; it follows window height so all 3 rows stay on screen.
    Tablets keep 3 per row and phones keep 2 (see the max-width rules). */
-@media(min-width:1100px){.playground,.playground.filtered{grid-template-columns:repeat(4,minmax(0,1fr));gap:24px 20px;padding:50px 40px 45px}.playground .bubble.bubble{width:min(90%,194px,calc(((100vh - 150px)/3 - 16px)*.9))}.playground .bubble strong{font-size:clamp(14.5px,2.35vh,20px)}.playground .bubble>span:not(.icon){font-size:clamp(9px,1.35vh,11px);max-width:84%}}
+@media(min-width:1100px){.playground,.playground.filtered{--b:min(194px,calc(((100vh - 150px)/3 - 16px)*.9));grid-template-columns:repeat(5,minmax(0,1fr));gap:24px 20px;padding:50px 40px 45px}.playground .bubble.bubble{width:min(90%,var(--b))}.playground .bubble strong{font-size:clamp(14.5px,2.35vh,20px)}.playground .bubble>span:not(.icon){font-size:clamp(9px,1.35vh,11px);max-width:84%}}
 .tracker{background:#eed0cc;rotate:-5deg;animation-delay:-2s}.reviewradar{background:#c7ded8;rotate:6deg;animation-delay:-4s}.between{background:#e5cfe0;rotate:-7deg;animation-delay:-1s}
 .tracker strong{font-size:22px}.tiny-star{display:none}
 /* Newer projects reuse the same pastel bubble recipe: a soft fill, a slight tilt, and an offset float. */
@@ -81,3 +82,41 @@
 
 @media(max-width:720px){.wordmark-kid{width:52px}.wordmark-title{font-size:15px;margin-left:12px}.kid-pop img{width:170px}}
 @media(prefers-reduced-motion:reduce){.wordmark-kid,.kid-pop{transition:none}}
+
+/* ---------------------------------------------------------------------------
+   BUBBLE SIZES BY IMPORTANCE
+   Each bubble gets a tier class in the HTML:
+     feature = the headline project (Drishti AI), a big bubble over a 2×2 block
+     tier-l  = large, tier-m = medium, tier-s = small
+   --b is the base size (set per screen width), --s is the tier's share of it.
+   --dx/--dy nudge each bubble off the grid lines so the field looks scattered,
+   not boxed. They use `translate`, which doesn't clash with the float animation
+   (transform), the tilt (rotate) or the hover zoom (scale).
+   --------------------------------------------------------------------------- */
+:where(.playground){--b:230px}
+.playground,.playground.filtered{grid-auto-flow:dense} /* lets small bubbles fill any gap beside the 2×2 one */
+.playground .bubble.bubble{width:min(90%,calc(var(--b)*var(--s,1)));translate:var(--dx,0) var(--dy,0)}
+.tier-l{--s:1}.tier-m{--s:.87}.tier-s{--s:.75}
+
+/* The featured bubble: spans 2 columns and 2 rows, with bigger text */
+.playground .bubble.bubble.feature{grid-column:span 2;grid-row:span 2;width:min(94%,calc(var(--b)*2 + 8px));rotate:-3deg}
+.playground .bubble.feature strong{font-size:clamp(28px,4.6vh,40px);letter-spacing:-1.5px}
+.playground .bubble.feature>span:not(.icon){font-size:clamp(11px,1.8vh,14px)}
+.playground .bubble.feature .icon{font-size:clamp(36px,5.6vh,50px)}
+.playground .bubble.feature b{font-size:26px}
+.bubble-flag{font:600 9px 'DM Sans',sans-serif;letter-spacing:1.6px;background:#252820;color:#f5f3eb;padding:6px 11px;border-radius:20px;margin-bottom:10px}
+.playground .bubble.tier-s strong{font-size:clamp(13px,2.05vh,17px)}
+
+/* Hand-picked offsets (in px) so the scatter looks random but never overlaps */
+.otif{--dx:-6px;--dy:-4px}.reviewradar{--dx:8px;--dy:-8px}.company{--dx:-4px;--dy:14px}
+.dsat{--dx:10px;--dy:10px}.tracker{--dx:-10px;--dy:6px}.spotify{--dx:6px;--dy:-12px}
+.cv{--dx:4px;--dy:-6px}.listenr{--dx:-8px;--dy:8px}.quizmaker{--dx:12px;--dy:-10px}
+.between{--dx:-6px;--dy:4px}.spirit{--dx:6px;--dy:12px}
+
+/* Phones: 2 columns, so the feature takes a full-width row and offsets are dropped */
+@media(max-width:720px){
+  .playground.playground{--b:190px}
+  .playground .bubble.bubble{translate:none;max-width:none} /* lift the old 190px cap so tiers show */
+  .playground .bubble.bubble.feature{grid-row:span 1;width:min(78%,290px);margin-top:10px}
+  .playground .bubble.feature strong{font-size:30px}
+}
