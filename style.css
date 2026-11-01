@@ -84,39 +84,61 @@
 @media(prefers-reduced-motion:reduce){.wordmark-kid,.kid-pop{transition:none}}
 
 /* ---------------------------------------------------------------------------
-   BUBBLE SIZES BY IMPORTANCE
-   Each bubble gets a tier class in the HTML:
-     feature = the headline project (Drishti AI), a big bubble over a 2×2 block
-     tier-l  = large, tier-m = medium, tier-s = small
-   --b is the base size (set per screen width), --s is the tier's share of it.
-   --dx/--dy nudge each bubble off the grid lines so the field looks scattered,
-   not boxed. They use `translate`, which doesn't clash with the float animation
-   (transform), the tilt (rotate) or the hover zoom (scale).
+   BUBBLE SIZES + SCATTER
+   Design idea: size shows importance, position does NOT. The three biggest
+   bubbles sit on a diagonal (hero in the middle-top, CV Builder top-right,
+   Lyrics Pop-Out bottom-left) so the eye travels across the whole canvas.
+   Big and small bubbles alternate so no two big ones touch.
+
+   Size ranking (fixed):  Company Overview > CV Builder > Lyrics Pop-Out
+   Everyone else shares three smaller sizes, so the field has rhythm.
+
+   --b  = base bubble size (set per screen width)
+   --s  = this bubble's share of the base size
+   --dx/--dy = nudge off the grid lines. Smaller bubbles drift further, which
+          makes the layout feel scattered rather than boxed. They use
+          `translate`, which doesn't clash with the float animation
+          (transform), the tilt (rotate) or the hover zoom (scale).
    --------------------------------------------------------------------------- */
 :where(.playground){--b:230px}
-.playground,.playground.filtered{grid-auto-flow:dense} /* lets small bubbles fill any gap beside the 2×2 one */
-.playground .bubble.bubble{width:min(90%,calc(var(--b)*var(--s,1)));translate:var(--dx,0) var(--dy,0)}
-.tier-l{--s:1}.tier-m{--s:.87}.tier-s{--s:.75}
+.playground,.playground.filtered{grid-auto-flow:dense} /* lets bubbles fill any gap beside the 2x2 hero */
+.playground .bubble.bubble{width:min(90%,calc(var(--b)*var(--s,.8)));translate:var(--dx,0) var(--dy,0)}
 
-/* The featured bubble: spans 2 columns and 2 rows, with bigger text */
-.playground .bubble.bubble.feature{grid-column:span 2;grid-row:span 2;width:min(94%,calc(var(--b)*2 + 8px));rotate:-3deg}
+/* Size map: 1 = full cell. Hero (Company Overview) is set separately below. */
+.cv{--s:1}                     /* #2 */
+.spotify{--s:.93}              /* #3 */
+.tracker,.drishti{--s:.86}     /* strong supporting cast */
+.dsat,.otif{--s:.79}          /* DSAT has long text, so it needs room */
+.quizmaker,.listenr,.between{--s:.72}
+.spirit,.reviewradar{--s:.65}  /* little accents that fill the gaps */
+
+/* Title text scales with the bubble, but never below 12px so it stays readable */
+.playground .bubble:not(.feature) strong{font-size:max(12px,calc(clamp(14.5px,2.35vh,20px)*var(--s,.8)*1.08))}
+
+/* The hero bubble: a 2x2 block, pinned off-centre (columns 2-3, rows 1-2) */
+.playground .bubble.bubble.feature{grid-column:2 / span 2;grid-row:1 / span 2;width:min(94%,calc(var(--b)*2 + 8px));rotate:-3deg;translate:none}
 .playground .bubble.feature strong{font-size:clamp(28px,4.6vh,40px);letter-spacing:-1.5px}
 .playground .bubble.feature>span:not(.icon){font-size:clamp(11px,1.8vh,14px)}
 .playground .bubble.feature .icon{font-size:clamp(36px,5.6vh,50px)}
 .playground .bubble.feature b{font-size:26px}
-.bubble-flag{font:600 9px 'DM Sans',sans-serif;letter-spacing:1.6px;background:#252820;color:#f5f3eb;padding:6px 11px;border-radius:20px;margin-bottom:10px}
-.playground .bubble.tier-s strong{font-size:clamp(13px,2.05vh,17px)}
+/* Small dark pill, e.g. "LATEST BUILD" on Drishti AI */
+.bubble-flag{font:600 8px 'DM Sans',sans-serif;letter-spacing:1.4px;background:#252820;color:#f5f3eb;padding:5px 9px;border-radius:20px;margin-bottom:6px}
 
-/* Hand-picked offsets (in px) so the scatter looks random but never overlaps */
-.otif{--dx:-6px;--dy:-4px}.reviewradar{--dx:8px;--dy:-8px}.company{--dx:-4px;--dy:14px}
-.dsat{--dx:10px;--dy:10px}.tracker{--dx:-10px;--dy:6px}.spotify{--dx:6px;--dy:-12px}
-.cv{--dx:4px;--dy:-6px}.listenr{--dx:-8px;--dy:8px}.quizmaker{--dx:12px;--dy:-10px}
-.between{--dx:-6px;--dy:4px}.spirit{--dx:6px;--dy:12px}
+/* Hand-picked nudges (px). Bigger bubbles move a little, small ones more. */
+.cv{--dx:4px;--dy:10px}.spotify{--dx:10px;--dy:-6px}
+.tracker{--dx:-8px;--dy:12px}.drishti{--dx:-14px;--dy:-6px}
+.between{--dx:12px;--dy:-14px}.otif{--dx:-12px;--dy:-8px}
+.quizmaker{--dx:-18px;--dy:22px}.listenr{--dx:14px;--dy:6px}.dsat{--dx:-6px;--dy:18px}
+.spirit{--dx:22px;--dy:-4px}.reviewradar{--dx:-4px;--dy:20px}
 
-/* Phones: 2 columns, so the feature takes a full-width row and offsets are dropped */
+/* Tablets: 3 columns, so the hero simply takes a 2x2 block wherever it fits */
+@media(max-width:1099px){.playground .bubble.bubble.feature{grid-column:span 2;grid-row:span 2}}
+
+/* Phones: 2 columns, so the hero takes a full-width row and nudges are dropped */
 @media(max-width:720px){
   .playground.playground{--b:190px}
-  .playground .bubble.bubble{translate:none;max-width:none} /* lift the old 190px cap so tiers show */
-  .playground .bubble.bubble.feature{grid-row:span 1;width:min(78%,290px);margin-top:10px}
+  .playground .bubble.bubble{translate:none;max-width:none} /* lift the old 190px cap so sizes show */
+  .playground .bubble.bubble.feature{grid-column:1 / -1;grid-row:span 1;width:min(78%,290px);margin-top:10px}
   .playground .bubble.feature strong{font-size:30px}
+  .playground .bubble:not(.feature) strong{font-size:max(13px,calc(18px*var(--s,.8)*1.1))}
 }
