@@ -107,7 +107,8 @@
 /* Size map: 1 = full cell. Hero (Company Overview) is set separately below. */
 .cv{--s:1}                     /* #2 */
 .spotify{--s:.93}              /* #3 */
-.tracker,.drishti{--s:.86}     /* strong supporting cast */
+.drishti{--s:.9}               /* #4: latest build */
+.tracker{--s:.86}              /* #5 */
 .dsat,.otif{--s:.79}          /* DSAT has long text, so it needs room */
 .quizmaker,.listenr,.between{--s:.72}
 .spirit,.reviewradar{--s:.65}  /* little accents that fill the gaps */
