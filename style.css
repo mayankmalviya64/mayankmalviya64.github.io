@@ -117,11 +117,11 @@
 .playground .bubble:not(.feature) strong{font-size:max(12px,calc(clamp(14.5px,2.35vh,20px)*var(--s,.8)*1.08))}
 
 /* The hero bubble: a 2x2 block, pinned off-centre (columns 2-3, rows 1-2) */
-.playground .bubble.bubble.feature{grid-column:2 / span 2;grid-row:1 / span 2;width:min(94%,calc(var(--b)*2 + 8px));rotate:-3deg;translate:none}
-.playground .bubble.feature strong{font-size:clamp(28px,4.6vh,40px);letter-spacing:-1.5px}
-.playground .bubble.feature>span:not(.icon){font-size:clamp(11px,1.8vh,14px)}
-.playground .bubble.feature .icon{font-size:clamp(36px,5.6vh,50px)}
-.playground .bubble.feature b{font-size:26px}
+.playground .bubble.bubble.feature{grid-column:2 / span 2;grid-row:1 / span 2;width:min(78%,calc(var(--b)*1.5));rotate:-3deg;translate:6px 4px} /* ~1.5x CV Builder: clearly #1 without swallowing the canvas */
+.playground .bubble.feature strong{font-size:clamp(24px,3.7vh,32px);letter-spacing:-1.2px}
+.playground .bubble.feature>span:not(.icon){font-size:clamp(10.5px,1.6vh,13px)}
+.playground .bubble.feature .icon{font-size:clamp(30px,4.6vh,40px)}
+.playground .bubble.feature b{font-size:22px}
 /* Small dark pill, e.g. "LATEST BUILD" on Drishti AI */
 .bubble-flag{font:600 8px 'DM Sans',sans-serif;letter-spacing:1.4px;background:#252820;color:#f5f3eb;padding:5px 9px;border-radius:20px;margin-bottom:6px}
 
@@ -139,7 +139,7 @@
 @media(max-width:720px){
   .playground.playground{--b:190px}
   .playground .bubble.bubble{translate:none;max-width:none} /* lift the old 190px cap so sizes show */
-  .playground .bubble.bubble.feature{grid-column:1 / -1;grid-row:span 1;width:min(78%,290px);margin-top:10px}
+  .playground .bubble.bubble.feature{grid-column:1 / -1;grid-row:span 1;width:min(64%,240px);margin-top:10px}
   .playground .bubble.feature strong{font-size:30px}
   .playground .bubble:not(.feature) strong{font-size:max(13px,calc(18px*var(--s,.8)*1.1))}
 }
