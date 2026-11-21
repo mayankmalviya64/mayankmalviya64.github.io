@@ -86,13 +86,13 @@
 /* ---------------------------------------------------------------------------
    BUBBLE SIZES + SCATTER
    Design idea: size shows importance, position does NOT.
-   - Desktop is a 4 x 3 grid: 12 slots for 12 projects, so there are no
-     empty slots and every bubble can be large.
-   - The big ones sit apart (Company Overview top, CV Builder top-right,
-     Lyrics Pop-Out bottom-left), with smaller bubbles between them.
+   - Desktop is a staggered 4 / 5 / 4 honeycomb: 13 slots for 13 projects,
+     so there are no empty slots and every bubble can be large.
+   - The big ones sit apart (Paytm Household Hub top, CV Builder middle-left,
+     Company Overview bottom-right), with smaller bubbles between them.
 
-   Size ranking (fixed): Company Overview > CV Builder > Lyrics Pop-Out
-   > Drishti AI > the rest (some share a size).
+   Size ranking (fixed): Paytm Household Hub > Company Overview > CV Builder
+   > Lyrics Pop-Out > Drishti AI > the rest (some share a size).
    RULE: no bubble may be more than 1.2x the next largest one.
 
    --b  = base bubble size (set per screen width)
@@ -107,19 +107,29 @@
 .playground .bubble.bubble{width:calc(min(90%,var(--b))*var(--s,.8));translate:var(--dx,0) var(--dy,0)}
 
 /* Size map (1 = full size). Each step down is at most 1.2x. */
-.company{--s:1.19}             /* #1 (1.19 so pixel rounding never tips past 1.2) */
-.cv{--s:1}                     /* #2 */
-.spotify{--s:.93}              /* #3 */
-.drishti{--s:.9}               /* #4: latest build */
-.tracker{--s:.86}              /* #5 */
+.paytm{--s:1.19;background:#cde3f6;animation-delay:-2.5s} /* #1 (1.19 so pixel rounding never tips past 1.2) */
+.company{--s:1.08}             /* #2: 1.19/1.08 = 1.10x, 1.08/1 = 1.08x */
+.cv{--s:1}                     /* #3 */
+.spotify{--s:.93}              /* #4 */
+.drishti{--s:.9}               /* #5: latest build */
+.tracker{--s:.86}              /* #6 */
 .dsat,.otif{--s:.79}           /* DSAT has long text, so it needs room */
 .quizmaker,.listenr,.between{--s:.72}
 .spirit,.reviewradar{--s:.65}  /* little accents */
 
-/* Desktop: 4 columns. Bubble size follows window height so the 3 rows
-   (one of them holding the 1.19x hero) stay on one screen. */
+/* Desktop: staggered rows of 4 / 5 / 4.
+   The grid has 10 thin columns and every bubble spans 2 of them (5 per row).
+   Rows 1 and 3 start one thin column in, so they hold 4 bubbles each and sit
+   between the bubbles of row 2, like a honeycomb.
+   Bubble size follows window height so the 3 rows stay on one screen. */
 @media(min-width:1100px){
-  .playground,.playground.filtered{--b:min(232px,calc((100vh - 235px)/3.2));grid-template-columns:repeat(4,minmax(0,1fr));gap:14px 20px;padding:48px 50px 44px}
+  .playground,.playground.filtered{--b:min(220px,calc((100vh - 235px)/3.2));grid-template-columns:repeat(10,minmax(0,1fr));gap:14px 16px;padding:48px 40px 44px}
+  .playground .bubble{grid-column:span 2}
+  /* 1st and 10th bubbles open rows 1 and 3, shifted half a slot right */
+  .playground:not(.filtered) .bubble:nth-of-type(1),
+  .playground:not(.filtered) .bubble:nth-of-type(10){grid-column:2 / span 2}
+  /* Filtered view: plain rows, no shift (hidden bubbles would break the pattern) */
+  .playground.filtered{grid-auto-flow:row;grid-template-columns:repeat(8,minmax(0,1fr))} /* 4 per row, as before */
 }
 
 /* Title text scales with the bubble, but never below 12px so it stays readable */
@@ -136,7 +146,7 @@
 .bubble-flag{font:600 8px 'DM Sans',sans-serif;letter-spacing:1.4px;background:#252820;color:#f5f3eb;padding:5px 9px;border-radius:20px;margin-bottom:6px;white-space:nowrap}
 
 /* Hand-picked nudges (px). Bigger bubbles move a little, small ones more. */
-.company{--dx:10px;--dy:6px}.cv{--dx:-6px;--dy:10px}.spotify{--dx:12px;--dy:-4px}
+.paytm{--dx:6px;--dy:8px}.company{--dx:10px;--dy:6px}.cv{--dx:-6px;--dy:10px}.spotify{--dx:12px;--dy:-4px}
 .drishti{--dx:-10px;--dy:4px}.tracker{--dx:8px;--dy:10px}
 .dsat{--dx:-14px;--dy:6px}.otif{--dx:-10px;--dy:-6px}
 .quizmaker{--dx:-16px;--dy:22px}.listenr{--dx:18px;--dy:-4px}.between{--dx:-12px;--dy:-14px}
@@ -155,4 +165,15 @@
   .playground .bubble:not(.feature)>span:not(.icon){font-size:8.5px;line-height:1.35;max-width:80%}
   .playground .bubble:not(.feature) b{display:none} /* the ↗ is decoration only; the whole bubble is still the link */
   .bubble-flag{font-size:7px;letter-spacing:1px;padding:4px 7px;margin-bottom:3px}
+}
+
+/* 13 bubbles leave one alone on the last row on tablets (3 columns) and
+   phones (2 columns). Let that bubble span the whole row so it sits centred,
+   but size it from ONE column's width so it doesn't grow and break the size order.
+   (90% of one column: tablet = 30% - 12px, phone = 45% - 5px.) */
+@media(min-width:721px) and (max-width:1099px){
+  .playground:not(.filtered) .bubble.bubble.company{grid-column:1 / -1;width:calc(min(30% - 12px,var(--b))*var(--s))}
+}
+@media(max-width:720px){
+  .playground:not(.filtered) .bubble.bubble.otif{grid-column:1 / -1;width:calc(min(45% - 5px,var(--b))*var(--s))}
 }
